@@ -1,5 +1,5 @@
 /* Service worker de Mi Kangoo Finanzas.
- * Versión: 1.0.1   ← debe coincidir con version.js (las pruebas lo verifican)
+ * Versión: 1.1.0   ← debe coincidir con version.js (las pruebas lo verifican)
  *
  * - Guarda TODOS los archivos de la app en una caché con el número de versión.
  * - Sirve siempre desde esa caché: los archivos nunca se mezclan entre versiones.
@@ -11,7 +11,7 @@ importScripts('version.js');
 const VERSION = self.MKF_VERSION;
 const PREFIJO = 'mkf-';
 const CACHE = PREFIJO + VERSION;
-const ARCHIVOS = ['./', './index.html', './styles.css', './version.js', './calc.js', './app.js', './manifest.webmanifest',
+const ARCHIVOS = ['./', './index.html', './styles.css', './version.js', './calc.js', './graficos.js', './app.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png'];
 
 self.addEventListener('install', e => {

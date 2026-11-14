@@ -1,4 +1,4 @@
-# Mi Kangoo Finanzas — Etapa 1 (v1.0.1)
+# Mi Kangoo Finanzas — v1.1.0
 
 PWA (aplicación web instalable) sin servidor propio ni servicios pagos.
 Tus datos quedan **solo en el dispositivo** donde la usás (IndexedDB del navegador).
@@ -8,7 +8,8 @@ No hay sincronización entre celular y computadora: para pasar datos, usá la co
 - `index.html` — estructura de la app
 - `styles.css` — diseño
 - `version.js` — número de versión (único lugar, junto con la línea "Versión" de `sw.js`)
-- `calc.js` — cálculos (capital, metas, recomendación, validación de copias, CSV seguro)
+- `calc.js` — cálculos (capital, metas, estimaciones, migración de datos, validación de copias, CSV seguro)
+- `graficos.js` — gráficos propios en SVG (sin librerías ni internet)
 - `app.js` — pantallas, guardado, exportar/importar
 - `sw.js` — permite usar la app sin internet
 - `manifest.webmanifest` + `icons/` — permite instalarla
@@ -39,16 +40,24 @@ Respaldo → **Descargar copia de seguridad** (o **Enviar copia**) → en el otr
 Respaldo → **Elegir archivo de copia** → **Sí, restaurar**. Esto reemplaza los datos de ese equipo
 (se guardan los anteriores para poder deshacer).
 
-## Actualizar la app (por ejemplo, de 1.0.0 a 1.0.1)
-1. **Antes**, en cada dispositivo: Respaldo → Descargar copia de seguridad.
-2. Subí al repositorio todos los archivos nuevos (reemplazan a los viejos). La carpeta `tests` es opcional.
-3. Abrí la app: en unos segundos aparece "Hay una versión nueva" → **Actualizar ahora**.
-   Si no aparece, cerrala del todo y volvé a abrirla.
-4. Verificá en Respaldo que al pie diga **v1.0.1** y que tus movimientos sigan ahí.
+## Actualizar la app en GitHub Pages (por ejemplo, de 1.0.1 a 1.1.0)
+1. **Antes**, en el celular: Respaldo → Descargar copia de seguridad (y guardala fuera del teléfono).
+2. En la PC, descomprimí el ZIP nuevo.
+3. En GitHub, entrá a tu repositorio → **Add file → Upload files**.
+4. Arrastrá **todos** los archivos de la carpeta (incluida `graficos.js`, que es nueva, y la carpeta `icons`).
+   La carpeta `tests` no hace falta subirla. Tocá **Commit changes**.
+5. Esperá a que termine la publicación: pestaña **Actions**, la tarea "pages build and deployment" en verde (1 a 3 minutos).
+6. En el celular, abrí la app. Aparece "Hay una versión nueva" → **Actualizar ahora**.
+   Si no aparece, cerrala del todo (sacala de las apps recientes) y volvé a abrirla; puede hacer falta dos veces.
+7. Comprobá: Respaldo → al pie dice **v1.1.0**; misma cantidad de movimientos y mismo capital que antes.
+
+La 1.1 convierte tus datos al formato nuevo **sin cambiar ningún movimiento** y guarda una copia intacta de los
+datos anteriores (Respaldo → "Datos de antes de la actualización"). Si algo no se ve bien, no cargues nada nuevo,
+descargá esa copia y avisá.
 
 Para publicar una versión futura: cambiá el número en `version.js` y en la línea "Versión" de `sw.js`.
 
 ## Pruebas automatizadas (opcional, en una PC)
-- Cálculos y validaciones (necesita Node.js 18 o superior): `node --test tests/calc.test.js`
+- Cálculos, migración y gráficos (necesita Node.js 18 o superior): `node --test tests/calc.test.js tests/graficos.test.js`
 - Navegador real (necesita Python y Playwright): `pip install playwright`, `python -m playwright install chromium`,
-  luego `python tests/e2e_navegador.py`
+  luego `python tests/e2e_navegador.py` (incluye la actualización real desde la 1.0.1, guardada en `tests/fixtures/`)

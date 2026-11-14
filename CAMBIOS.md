@@ -1,5 +1,23 @@
 # Cambios
 
+## 1.1.0 — 14/11/2026 (seguimiento del capital; sin noticias ni créditos)
+- Metas de 12, 18, 24, 36 y 48 meses o cualquier plazo de 1 a 240 meses; se pueden comparar hasta 10.
+- Plan de ahorro (ahorro mensual y aguinaldo) editable "desde tal mes", con historial: los meses pasados
+  conservan el plan que tenían.
+- Precio de la Kangoo con historial: cada precio nuevo se agrega; uno cargado por error se anula sin borrarse.
+  Aviso cuando la Kangoo aumentó más que tu capital.
+- Cuánto falta en dinero y en meses: con tu plan y, con 3 meses de datos, a tu ritmo real (ESTIMADO).
+- Pantalla Gráficos (propios, sin internet): evolución del capital real, ahorro real frente al plan,
+  progreso hacia el precio y comparación de plazos. Con tooltip (dedo, mouse o flechas) y tabla de números.
+- Distinción visual: REAL (azul sólido), ESTIMADO (azul claro / punteado), precio (naranja) con su estado.
+- Explicaciones breves en cada sección.
+- Datos: formato nuevo (esquema 2) con migración automática y comprobada desde 1.0.x; se guarda una copia
+  intacta de los datos anteriores. Las copias de seguridad de 1.0.x se pueden restaurar.
+- CSV del historial de precios.
+- Corrección: una pestaña abierta antes de la primera instalación ahora también se recarga al actualizar.
+- Cambio de criterio: "Este mes ahorraste" ya no cuenta un movimiento anulado ni su corrección (se cancelan en el
+  mes del movimiento original). El capital total no cambia.
+
 ## 1.0.1 — 14/11/2026 (confiabilidad; sin funciones nuevas de la Etapa 2)
 - No se puede anular dos veces el mismo movimiento (doble toque, dos pestañas o llamadas simultáneas).
   Datos viejos con una anulación repetida: la repetida no se cuenta y se marca "CORRECCIÓN REPETIDA: sin efecto".
