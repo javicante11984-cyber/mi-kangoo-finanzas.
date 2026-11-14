@@ -682,8 +682,10 @@ async function renderRespaldo(main) {
     h += '<div class="card"><h3>Datos de antes de la actualización</h3><p class="sub">Al pasar a la versión 1.1 (' + fechaHoraTexto(premig.guardado) + ') guardamos una copia intacta de tus datos anteriores (' + (premig.datos && Array.isArray(premig.datos.movimientos) ? premig.datos.movimientos.length : '?') + ' movimientos). No la necesitás si todo se ve bien.</p>';
     h += '<button class="btn" type="button" id="bPremig">Descargar esa copia</button></div>';
   }
+  h += tarjetaInstalacion();
   h += '<p class="sub centro">Mi Kangoo Finanzas v' + esc(APP_VERSION) + ' · Etapa 1</p>';
   main.innerHTML = h;
+  activarInstalacion();
 
   $('#bExp').addEventListener('click', async () => {
     descargar('mi-kangoo-respaldo_' + sello() + '.json', textoRespaldo(), 'application/json');
@@ -749,6 +751,55 @@ async function renderRespaldo(main) {
     if (!ok) return;
     aviso('Restauración deshecha.');
     render();
+  });
+}
+
+/* ---------- Instalación (PWA) ---------- */
+let eventoInstalar = null;
+let ultimaRevision = null;
+window.addEventListener('beforeinstallprompt', ev => {
+  ev.preventDefault();                 // guardamos el permiso para ofrecer nuestro botón
+  eventoInstalar = ev;
+  if (pantallaActual() === 'respaldo' && estado) render();
+});
+window.addEventListener('appinstalled', () => { eventoInstalar = null; aviso('App instalada. Abrila desde el ícono nuevo.'); if (pantallaActual() === 'respaldo' && estado) render(); });
+
+function tarjetaInstalacion() {
+  const instalada = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  let h = '<div class="card" id="cardInstalar"><h3>Instalar la app</h3>';
+  h += '<p class="fila-icono"><img src="icon-192.png" width="56" height="56" alt=""> <span>Ícono de Mi Kangoo Finanzas: una furgoneta familiar de cinco asientos que es también una alcancía.</span></p>';
+  if (instalada) h += '<p class="msg bueno" id="estadoInstalacion">Estás usando la app instalada.</p>';
+  else if (eventoInstalar) h += '<p id="estadoInstalacion">Chrome permite instalarla en este dispositivo.</p><button class="btn primario" type="button" id="bInstalar">Instalar app</button>';
+  else h += '<p id="estadoInstalacion">Para instalarla en Android: menú ⋮ de Chrome → <b>Instalar app</b>. Si Chrome dice que no se puede, tocá "Revisar instalación".</p>';
+  h += '<p class="sub">Instalar o quitar un acceso directo no borra tus datos: quedan guardados en Chrome para esta dirección. Nunca uses "Borrar datos del sitio" sin hacer antes una copia de seguridad.</p>';
+  h += '<button class="btn" type="button" id="bRevisarInst">Revisar instalación</button><div id="resInstalacion"></div></div>';
+  return h;
+}
+
+function activarInstalacion() {
+  const bi = $('#bInstalar');
+  if (bi) bi.addEventListener('click', async () => {
+    if (!eventoInstalar) return;
+    const ev = eventoInstalar; eventoInstalar = null;
+    try { await ev.prompt(); const r = await ev.userChoice; if (r && r.outcome !== 'accepted') aviso('Instalación cancelada.'); } catch (e) { aviso('Chrome no pudo mostrar la instalación. Usá el menú ⋮ → Instalar app.', true); }
+    render();
+  });
+  $('#bRevisarInst').addEventListener('click', async ev => {
+    const box = $('#resInstalacion');
+    ev.target.disabled = true; box.innerHTML = '<p class="sub">Revisando el sitio publicado…</p>';
+    let res;
+    try { res = Instalacion.evaluar(await Instalacion.revisar(APP_VERSION)); }
+    catch (e) { res = { listo: false, items: [{ ok: false, texto: 'No se pudo completar la revisión (' + (e && e.message ? e.message : 'error') + ').', arreglo: 'Probá de nuevo con internet.' }] }; }
+    ultimaRevision = res;
+    ev.target.disabled = false;
+    if (!$('#resInstalacion')) return;
+    $('#resInstalacion').innerHTML = '<p class="msg ' + (res.listo ? 'bueno' : 'malo') + '" id="veredictoInst">' + (res.listo ? 'Todo listo: Chrome debería permitir instalar la app.' : 'Hay problemas que impiden instalar o usar sin conexión:') + '</p>' +
+      '<ul class="lista-diag">' + res.items.map(i => '<li class="' + (i.ok ? 'ok' : 'mal') + '"><span aria-hidden="true">' + (i.ok ? '✅' : '❌') + '</span> ' + esc(i.texto) + (i.arreglo ? '<br><span class="sub">Qué hacer: ' + esc(i.arreglo) + '</span>' : '') + '</li>').join('') + '</ul>' +
+      '<button class="btn" type="button" id="bCopiarInst">Copiar informe</button>';
+    $('#bCopiarInst').addEventListener('click', async () => {
+      const t = Instalacion.texto(ultimaRevision, 'Versión ' + APP_VERSION + ' · ' + location.origin + location.pathname + ' · ' + navigator.userAgent);
+      try { await navigator.clipboard.writeText(t); aviso('Informe copiado. Podés pegarlo en un mensaje.'); } catch (e) { aviso('No se pudo copiar automáticamente.', true); }
+    });
   });
 }
 

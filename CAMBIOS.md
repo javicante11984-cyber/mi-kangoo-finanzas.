@@ -1,5 +1,16 @@
 # Cambios
 
+## 1.1.1 — 14/11/2026 (instalación en Android; sin cambios en tus datos)
+- Íconos sueltos junto a index.html (antes en la carpeta `icons/`): si esa carpeta no llega a GitHub, Chrome no tiene
+  ícono, dice "no se puede instalar" y crea un acceso directo con una letra gris. Ahora se suben todos los archivos juntos.
+- Ícono propio: furgoneta familiar de pasajeros (3 ventanillas laterales, cinco asientos) que es una alcancía,
+  con una moneda entrando por el techo. Versión "maskable" para Android con el dibujo dentro de la zona segura.
+- Manifest con "id", rutas relativas que funcionan en la subcarpeta de GitHub Pages y página de inicio dentro del alcance.
+- Respaldo → "Instalar la app": botón "Instalar app" cuando Chrome lo permite y "Revisar instalación", que consulta
+  el sitio publicado (no la copia guardada) y dice qué archivo falta o está mal. "Copiar informe" para compartirlo.
+- Service worker: si faltan los íconos en el sitio, la app igual se instala para uso sin conexión.
+- Datos: mismo formato que la 1.1.0 (no hay migración). Las copias de 1.0.x y 1.1.0 se siguen restaurando.
+
 ## 1.1.0 — 14/11/2026 (seguimiento del capital; sin noticias ni créditos)
 - Metas de 12, 18, 24, 36 y 48 meses o cualquier plazo de 1 a 240 meses; se pueden comparar hasta 10.
 - Plan de ahorro (ahorro mensual y aguinaldo) editable "desde tal mes", con historial: los meses pasados

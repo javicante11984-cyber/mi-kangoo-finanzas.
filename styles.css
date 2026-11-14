@@ -98,3 +98,9 @@ svg.grafico:focus-visible { outline: 3px solid #8fb4d9; }
 .tabla-datos th, .tabla-datos td { border-bottom: 1px solid #eef1f4; padding: 6px 4px; text-align: left; }
 .tabla-datos td.num { text-align: right; white-space: nowrap; }
 .explica p { margin: 0 0 6px; color: var(--texto); font-size: .92rem; }
+
+/* ---- 1.1.1: instalación ---- */
+.fila-icono { display: flex; align-items: center; gap: 12px; }
+.fila-icono img { border-radius: 12px; flex: none; }
+.lista-diag { list-style: none; padding: 0; margin: 8px 0; }
+.lista-diag li { padding: 8px 0; border-bottom: 1px solid #eef1f4; }

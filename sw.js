@@ -1,9 +1,12 @@
 /* Service worker de Mi Kangoo Finanzas.
- * Versión: 1.1.0   ← debe coincidir con version.js (las pruebas lo verifican)
+ * Versión: 1.1.1   ← debe coincidir con version.js (las pruebas lo verifican)
  *
- * - Guarda TODOS los archivos de la app en una caché con el número de versión.
+ * - Guarda los archivos de la app en una caché con el número de versión.
  * - Sirve siempre desde esa caché: los archivos nunca se mezclan entre versiones.
- * - Una versión nueva se descarga completa en segundo plano; si falta un archivo, no se instala.
+ * - Una versión nueva se descarga completa en segundo plano; si falta un archivo ESENCIAL, no se instala
+ *   y sigue funcionando la versión anterior.
+ * - Los íconos no son esenciales: si faltan en el sitio, la app igual funciona sin conexión
+ *   (la pantalla Respaldo → "Revisar instalación" avisa qué falta).
  * - La versión nueva se activa solo cuando el usuario toca "Actualizar ahora".
  * - No guarda tus datos (esos están en IndexedDB).
  */
@@ -11,11 +14,14 @@ importScripts('version.js');
 const VERSION = self.MKF_VERSION;
 const PREFIJO = 'mkf-';
 const CACHE = PREFIJO + VERSION;
-const ARCHIVOS = ['./', './index.html', './styles.css', './version.js', './calc.js', './graficos.js', './app.js', './manifest.webmanifest',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png'];
+const ESENCIALES = ['./', './index.html', './styles.css', './version.js', './calc.js', './graficos.js', './instalacion.js', './app.js', './manifest.webmanifest'];
+const ICONOS = ['./icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon-48.png', './icon.svg'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARCHIVOS.map(u => new Request(u, { cache: 'reload' })))));
+  e.waitUntil(caches.open(CACHE).then(async c => {
+    await c.addAll(ESENCIALES.map(u => new Request(u, { cache: 'reload' })));
+    await Promise.all(ICONOS.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => null)));
+  }));
 });
 
 self.addEventListener('activate', e => {
@@ -33,6 +39,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  if (url.searchParams.has('diagnostico')) return;   // la revisión de instalación consulta el sitio real, no la copia
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     if (req.mode === 'navigate') {
